@@ -94,6 +94,7 @@ const watches = [
     specifications: {
       movement: "Automatic",
       caliber: "3235",
+      powerReserve: "70 hours",
       caseMaterial: "Oystersteel",
       braceletMaterial: "Oystersteel",
       caseDiameter: "41mm",
@@ -111,6 +112,7 @@ const watches = [
     specifications: {
       movement: "Automatic",
       caliber: "4130",
+      powerReserve: "72 hours",
       caseMaterial: "Oystersteel",
       braceletMaterial: "Oystersteel",
       caseDiameter: "40mm",
@@ -127,6 +129,7 @@ const watches = [
     specifications: {
       movement: "Automatic",
       caliber: "8800",
+      powerReserve: "55 hours",
       caseMaterial: "Stainless Steel",
       caseDiameter: "42mm",
       waterResistance: "300m",
@@ -143,6 +146,7 @@ const watches = [
     specifications: {
       movement: "Manual",
       caliber: "3861",
+      powerReserve: "50 hours",
       caseMaterial: "Stainless Steel",
       caseDiameter: "42mm",
     },
@@ -158,6 +162,7 @@ const watches = [
     specifications: {
       movement: "Automatic",
       caliber: "324 S C",
+      powerReserve: "45 hours",
       caseMaterial: "Stainless Steel",
       caseDiameter: "40mm",
     },
@@ -173,6 +178,7 @@ const watches = [
     specifications: {
       movement: "Automatic",
       caliber: "4302",
+      powerReserve: "70 hours",
       caseMaterial: "Stainless Steel",
       caseDiameter: "41mm",
     },
@@ -187,6 +193,8 @@ const watches = [
     stock: 12,
     specifications: {
       movement: "Quartz",
+      caliber: "Quartz",
+      powerReserve: "Battery",
       caseMaterial: "Stainless Steel",
       caseDiameter: "33.7mm",
     },
@@ -201,6 +209,8 @@ const watches = [
     stock: 5,
     specifications: {
       movement: "Manual",
+      caliber: "822/2",
+      powerReserve: "45 hours",
       caseMaterial: "Stainless Steel",
       caseDiameter: "45.6mm",
     },
@@ -216,6 +226,7 @@ const watches = [
     specifications: {
       movement: "Automatic",
       caliber: "3285",
+      powerReserve: "70 hours",
       caseMaterial: "Oystersteel",
       caseDiameter: "40mm",
     },
@@ -231,6 +242,7 @@ const watches = [
     specifications: {
       movement: "Automatic",
       caliber: "8900",
+      powerReserve: "60 hours",
       caseMaterial: "Stainless Steel",
       caseDiameter: "41mm",
       waterResistance: "150m",
@@ -247,6 +259,7 @@ const watches = [
     specifications: {
       movement: "Automatic",
       caliber: "240 PS IRM C LU",
+      powerReserve: "48 hours",
       caseMaterial: "Stainless Steel",
       caseDiameter: "40mm",
     },
@@ -260,7 +273,7 @@ const connect = async () => {
 const upsertBySlug = async (Model, data) => {
   const slug = data.slug || slugify(data.name);
   const payload = { ...data, slug };
-  return Model.findOneAndUpdate({ slug }, payload, {
+  return Model.findOneAndUpdate({ name: data.name }, payload, {
     new: true,
     upsert: true,
     setDefaultsOnInsert: true,

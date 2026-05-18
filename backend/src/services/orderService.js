@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const Order = require("../models/Order");
 const Watch = require("../models/Watch");
+const emailService = require("./emailService");
 
-const placeOrder = async ({ customerId, items }) => {
+const placeOrder = async ({ customer, items }) => {
   if (!items || items.length === 0) {
     const error = new Error("Order items are required");
     error.statusCode = 400;
@@ -14,6 +15,7 @@ const placeOrder = async ({ customerId, items }) => {
 
   try {
     const orderItems = [];
+    const emailItems = [];
     let totalPrice = 0;
 
     for (const item of items) {
@@ -39,13 +41,19 @@ const placeOrder = async ({ customerId, items }) => {
         priceAtPurchase: watch.price,
       });
 
+      emailItems.push({
+        name: watch.name,
+        quantity: item.quantity,
+        priceAtPurchase: watch.price,
+      });
+
       totalPrice += watch.price * item.quantity;
     }
 
     const order = await Order.create(
       [
         {
-          customer: customerId,
+          customer: customer._id,
           items: orderItems,
           totalPrice,
         },
@@ -56,7 +64,18 @@ const placeOrder = async ({ customerId, items }) => {
     await session.commitTransaction();
     session.endSession();
 
-    return order[0];
+    const createdOrder = order[0];
+    try {
+      await emailService.sendOrderConfirmation({
+        order: createdOrder,
+        customer,
+        items: emailItems,
+      });
+    } catch (emailError) {
+      console.error("Order created but failed to send confirmation email:", emailError);
+    }
+
+    return createdOrder;
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

@@ -75,6 +75,9 @@ const Collections = () => {
                       >
                         <Edit2 size={16} />
                       </Link>
+                      <Link to={`/collections/${col._id}/watches`} className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all" title="Manage watches">
+                        <Layers size={16} />
+                      </Link>
                       <button className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
                         <Trash2 size={16} />
                       </button>

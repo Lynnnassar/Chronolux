@@ -3,7 +3,7 @@ const orderService = require("../services/orderService");
 
 const placeOrder = asyncHandler(async (req, res) => {
   const order = await orderService.placeOrder({
-    customerId: req.user._id,
+    customer: req.user,
     items: req.body.items,
   });
   res.status(201).json(order);

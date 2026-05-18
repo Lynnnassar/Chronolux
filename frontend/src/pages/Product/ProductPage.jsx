@@ -85,25 +85,25 @@ const ProductPage = () => {
             <p className="uppercase text-[10px] tracking-[0.3em] text-black/40">
               Movement
             </p>
-            <p>{watch.specifications?.movement || "Automatic"}</p>
-          </div>
-          <div>
-            <p className="uppercase text-[10px] tracking-[0.3em] text-black/40">
-              Case
-            </p>
-            <p>{watch.specifications?.caseMaterial || "Stainless Steel"}</p>
+            <p>{watch.specifications?.movement || "—"}</p>
           </div>
           <div>
             <p className="uppercase text-[10px] tracking-[0.3em] text-black/40">
               Diameter
             </p>
-            <p>{watch.specifications?.caseDiameter || "40mm"}</p>
+            <p>{watch.specifications?.caseDiameter || "—"}</p>
           </div>
           <div>
             <p className="uppercase text-[10px] tracking-[0.3em] text-black/40">
-              Water
+              Caliber
             </p>
-            <p>{watch.specifications?.waterResistance || "100m"}</p>
+            <p>{watch.specifications?.caliber || "—"}</p>
+          </div>
+          <div>
+            <p className="uppercase text-[10px] tracking-[0.3em] text-black/40">
+              Power Reserve
+            </p>
+            <p>{watch.specifications?.powerReserve || "—"}</p>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Plus, Edit2, Trash2, Tag } from "lucide-react";
+import { Plus, Edit2, Trash2, Tag, Layers } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import config from "../config";
@@ -68,6 +68,9 @@ const CategoryList = () => {
                   <div className="flex justify-end space-x-2">
                     <Link to={`/categories/${cat._id}/edit`} className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all">
                       <Edit2 size={16} />
+                    </Link>
+                    <Link to={`/categories/${cat._id}/watches`} className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all" title="Manage watches">
+                      <Layers size={16} />
                     </Link>
                     <button 
                       onClick={() => {

@@ -50,6 +50,8 @@ const ProductForm = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [brands, setBrands] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
+  const [collections, setCollections] = useState([]);
 
   // Fetch product data if editing
   useEffect(() => {
@@ -88,10 +90,25 @@ const ProductForm = () => {
       .get(`${config.API_BASE_URL}/brands`)
       .then((res) => setBrands(res.data || []))
       .catch((err) => console.error("Failed to fetch brands:", err));
+    axios
+      .get(`${config.API_BASE_URL}/categories`)
+      .then((res) => setCategoriesList(res.data || []))
+      .catch((err) => console.error("Failed to fetch categories:", err));
+    axios
+      .get(`${config.API_BASE_URL}/collections`)
+      .then((res) => setCollections(res.data || []))
+      .catch((err) => console.error("Failed to fetch collections:", err));
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === "categories") {
+      const selected = Array.from(e.target.selectedOptions || []).map(
+        (o) => o.value,
+      );
+      setFormData((prev) => ({ ...prev, categories: selected }));
+      return;
+    }
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
       setFormData((prev) => ({
@@ -276,6 +293,30 @@ const ProductForm = () => {
                   ))}
                 </select>
               </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                  Collection
+                </label>
+                <select
+                  name="collectionRef"
+                  value={formData.collectionRef}
+                  onChange={handleInputChange}
+                  className="w-full bg-slate-50 border-slate-100 rounded-xl px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-all"
+                >
+                  <option value="">No collection</option>
+                  {collections
+                    .filter((c) => {
+                      if (!formData.brand) return true;
+                      const b = c.brand?._id || c.brand;
+                      return String(b) === String(formData.brand);
+                    })
+                    .map((col) => (
+                      <option key={col._id} value={col._id}>
+                        {col.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
               <div className="md:col-span-2 space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400">
                   Description
@@ -451,6 +492,24 @@ const ProductForm = () => {
                 >
                   <option value="new">New</option>
                   <option value="pre-owned">Pre-owned</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                  Categories
+                </label>
+                <select
+                  name="categories"
+                  multiple
+                  value={formData.categories}
+                  onChange={handleInputChange}
+                  className="w-full bg-slate-50 border-slate-100 rounded-xl px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none transition-all"
+                >
+                  {categoriesList.map((cat) => (
+                    <option key={cat._id} value={cat._id}>
+                      {cat.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

@@ -22,6 +22,8 @@ import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Collections from "./pages/Collections";
 import CollectionForm from "./pages/CollectionForm";
+import CategoryWatches from "./pages/CategoryWatches";
+import CollectionWatches from "./pages/CollectionWatches";
 
 function App() {
   return (
@@ -69,6 +71,15 @@ function App() {
                       path="/collections/:id/edit"
                       element={<CollectionForm />}
                     />
+                    <Route path="/collections/:id/watches" element={<CollectionWatches />} />
+
+                    <Route path="/categories" element={<CategoryList />} />
+                    <Route path="/categories/new" element={<CategoryForm />} />
+                    <Route
+                      path="/categories/:id/edit"
+                      element={<CategoryForm />}
+                    />
+                    <Route path="/categories/:id/watches" element={<CategoryWatches />} />
 
                     {/* Catch all - redirect to dashboard */}
                     <Route path="*" element={<Navigate to="/" replace />} />
