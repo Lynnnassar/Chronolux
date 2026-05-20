@@ -13,20 +13,11 @@ const CollectionForm = () => {
   const emptyFormData = {
     name: "",
     slug: "",
-    brand: "",
     description: "",
     status: "published",
   };
 
   const [formData, setFormData] = useState(emptyFormData);
-  const [brands, setBrands] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${config.API_BASE_URL}/brands`)
-      .then((res) => setBrands(res.data || []))
-      .catch((err) => console.error("Failed to fetch brands:", err));
-  }, []);
 
   useEffect(() => {
     if (isEdit) {
@@ -35,9 +26,14 @@ const CollectionForm = () => {
         .then((res) => {
           const collection = res.data;
           setFormData({
-            ...emptyFormData,
-            ...collection,
-            brand: collection.brand?._id || collection.brand || "",
+            name: collection.name || "",
+            slug: collection.slug || "",
+            description: collection.description || "",
+            status: collection.status || "published",
+            heroImage: collection.heroImage || "",
+            featured: collection.featured || false,
+            seoTitle: collection.seoTitle || "",
+            seoDescription: collection.seoDescription || "",
           });
         })
         .catch((err) => console.error("Failed to fetch collection:", err));
@@ -112,25 +108,6 @@ const CollectionForm = () => {
                 }
                 className="w-full bg-slate-50 border-slate-100 rounded-xl px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none"
               />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                Brand
-              </label>
-              <select
-                value={formData.brand}
-                onChange={(e) =>
-                  setFormData({ ...formData, brand: e.target.value })
-                }
-                className="w-full bg-slate-50 border-slate-100 rounded-xl px-4 py-3 focus:ring-2 focus:ring-slate-900 outline-none"
-              >
-                <option value="">Select a brand</option>
-                {brands.map((brand) => (
-                  <option key={brand._id} value={brand._id}>
-                    {brand.name}
-                  </option>
-                ))}
-              </select>
             </div>
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-slate-400">

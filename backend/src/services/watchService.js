@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Watch = require("../models/Watch");
 const Category = require("../models/Category");
+const Collection = require("../models/Collection");
 
 const listWatches = async (filters) => {
   const query = {};
@@ -30,11 +31,31 @@ const listWatches = async (filters) => {
     }
   }
 
-  return Watch.find(query).populate("categories", "name");
+  if (filters.collection) {
+    let collectionId = null;
+    if (mongoose.Types.ObjectId.isValid(filters.collection)) {
+      collectionId = filters.collection;
+    } else {
+      const collection = await Collection.findOne({ name: filters.collection });
+      collectionId = collection ? collection._id : null;
+    }
+    if (collectionId) {
+      query.collectionRef = collectionId;
+    } else {
+      query.collectionRef = { $in: [] };
+    }
+  }
+
+  return Watch.find(query)
+    .populate("categories", "name")
+    .populate("collectionRef", "name")
+    .populate("brand", "name");
 };
 
 const getWatchById = async (id) => {
-  const watch = await Watch.findById(id).populate("categories", "name");
+  const watch = await Watch.findById(id)
+    .populate("categories", "name")
+    .populate("brand", "name");
   if (!watch) {
     const error = new Error("Watch not found");
     error.statusCode = 404;

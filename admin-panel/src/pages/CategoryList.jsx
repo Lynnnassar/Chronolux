@@ -23,6 +23,16 @@ const CategoryList = () => {
     }
   });
 
+  const resetMutation = useMutation({
+    mutationFn: async () => {
+      const catsResp = await axios.get(`${config.API_BASE_URL}/categories`);
+      await Promise.all((catsResp.data || []).map((cat) => axios.delete(`${config.API_BASE_URL}/categories/${cat._id}`)));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-categories']);
+    }
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -30,13 +40,23 @@ const CategoryList = () => {
           <h2 className="text-3xl font-serif font-bold text-slate-900">Categories</h2>
           <p className="text-slate-500 text-sm">Organize watches by type or style.</p>
         </div>
-        <Link 
-          to="/categories/new" 
-          className="bg-slate-900 text-white px-6 py-3 rounded-xl flex items-center space-x-2 hover:bg-slate-800 transition-all shadow-lg"
-        >
-          <Plus size={18} />
-          <span className="text-sm font-bold">Add Category</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              if (window.confirm("Delete all categories?")) resetMutation.mutate();
+            }}
+            className="bg-white text-slate-900 px-4 py-2 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all"
+          >
+            Reset Categories
+          </button>
+          <Link 
+            to="/categories/new" 
+            className="bg-slate-900 text-white px-6 py-3 rounded-xl flex items-center space-x-2 hover:bg-slate-800 transition-all shadow-lg"
+          >
+            <Plus size={18} />
+            <span className="text-sm font-bold">Add Category</span>
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">

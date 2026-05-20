@@ -5,13 +5,34 @@ import config from "../config";
 import { Link } from "react-router-dom";
 
 const Collections = () => {
-  const { data: collections, isLoading } = useQuery({
+  const { data: collections, isLoading, refetch } = useQuery({
     queryKey: ["admin-collections"],
     queryFn: async () => {
       const response = await axios.get(`${config.API_BASE_URL}/collections`);
       return response.data;
     },
   });
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this collection?")) return;
+    try {
+      await axios.delete(`${config.API_BASE_URL}/collections/${id}`);
+      await refetch();
+    } catch (err) {
+      console.error("Failed to delete collection:", err);
+    }
+  };
+
+  const handleReset = async () => {
+    if (!window.confirm("Delete all collections?")) return;
+    try {
+      const colsResp = await axios.get(`${config.API_BASE_URL}/collections`);
+      await Promise.all((colsResp.data || []).map((c) => axios.delete(`${config.API_BASE_URL}/collections/${c._id}`)));
+      await refetch();
+    } catch (err) {
+      console.error("Failed to reset collections:", err);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -24,13 +45,21 @@ const Collections = () => {
             Group products into seasonal or themed collections.
           </p>
         </div>
-        <Link
-          to="/collections/new"
-          className="bg-slate-900 text-white px-6 py-3 rounded-xl flex items-center space-x-2 hover:bg-slate-800 transition-all shadow-lg"
-        >
-          <Plus size={18} />
-          <span className="text-sm font-bold">Add Collection</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleReset}
+            className="bg-white text-slate-900 px-4 py-2 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all"
+          >
+            Reset Collections
+          </button>
+          <Link
+            to="/collections/new"
+            className="bg-slate-900 text-white px-6 py-3 rounded-xl flex items-center space-x-2 hover:bg-slate-800 transition-all shadow-lg"
+          >
+            <Plus size={18} />
+            <span className="text-sm font-bold">Add Collection</span>
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -78,7 +107,7 @@ const Collections = () => {
                       <Link to={`/collections/${col._id}/watches`} className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all" title="Manage watches">
                         <Layers size={16} />
                       </Link>
-                      <button className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                      <button onClick={() => handleDelete(col._id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
                         <Trash2 size={16} />
                       </button>
                     </div>

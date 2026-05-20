@@ -23,7 +23,6 @@ const Sidebar = () => {
     { name: "Brands", path: "/brands", icon: Award },
     { name: "Collections", path: "/collections", icon: Layers },
     { name: "Categories", path: "/categories", icon: Tag },
-    { name: "Inventory", path: "/inventory", icon: Package },
     { name: "Orders", path: "/orders", icon: ShoppingCart },
     { name: "Customers", path: "/customers", icon: Users },
     { name: "Media Library", path: "/media", icon: ImageIcon },

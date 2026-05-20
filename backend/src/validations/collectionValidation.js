@@ -6,7 +6,6 @@ const createCollection = {
   body: joi.object().keys({
     name: joi.string().required().trim(),
     slug: joi.string().required().trim(),
-    brand: objectId.required(),
     description: joi.string().allow(""),
     heroImage: joi.string().allow(""),
     featured: joi.boolean(),
@@ -25,7 +24,6 @@ const updateCollection = {
     .keys({
       name: joi.string().trim(),
       slug: joi.string().trim(),
-      brand: objectId,
       description: joi.string().allow(""),
       heroImage: joi.string().allow(""),
       featured: joi.boolean(),

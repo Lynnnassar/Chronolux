@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { getWatches } from "@/services/api/watches";
 import { getBrands } from "@/services/api/brands";
 import { getCategories } from "@/services/api/categories";
+import { getCollections } from "@/services/api/collections";
 import WatchCard from "@/components/watch/WatchCard";
 
 const ShopPage = () => {
@@ -12,6 +13,7 @@ const ShopPage = () => {
 
   const brand = searchParams.get("brand") || "";
   const category = searchParams.get("category") || "";
+  const collection = searchParams.get("collection") || "";
   const minPrice = searchParams.get("minPrice") || "";
   const maxPrice = searchParams.get("maxPrice") || "";
 
@@ -25,12 +27,18 @@ const ShopPage = () => {
     queryFn: getCategories,
   });
 
+  const { data: collections = [] } = useQuery({
+    queryKey: ["collections"],
+    queryFn: getCollections,
+  });
+
   const { data: watches = [], isLoading } = useQuery({
-    queryKey: ["watches", brand, category, minPrice, maxPrice],
+    queryKey: ["watches", brand, category, collection, minPrice, maxPrice],
     queryFn: () =>
       getWatches({
         brand: brand || undefined,
         category: category || undefined,
+        collection: collection || undefined,
         minPrice: minPrice || undefined,
         maxPrice: maxPrice || undefined,
       }),
@@ -80,6 +88,18 @@ const ShopPage = () => {
           >
             <option value="">All brands</option>
             {brands.map((item) => (
+              <option key={item._id} value={item._id}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={collection}
+            onChange={(event) => updateParams({ collection: event.target.value })}
+            className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm"
+          >
+            <option value="">All collections</option>
+            {collections.map((item) => (
               <option key={item._id} value={item._id}>
                 {item.name}
               </option>

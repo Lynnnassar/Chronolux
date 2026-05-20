@@ -60,7 +60,6 @@ function App() {
                     <Route path="/customers" element={<CustomerList />} />
                     <Route path="/media" element={<MediaLibrary />} />
                     <Route path="/analytics" element={<Analytics />} />
-                    <Route path="/inventory" element={<ProductList />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/collections" element={<Collections />} />
                     <Route

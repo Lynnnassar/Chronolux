@@ -17,7 +17,7 @@ const ProfilePage = () => {
             Account
           </p>
           <h1 className="text-4xl font-serif">{user?.fullName}</h1>
-          <p className="text-sm text-black/60 mt-2">{user?.email}</p>
+          <p className="text-sm text-red/60 mt-2">{user?.email}</p>
         </div>
         <button
           onClick={logout}

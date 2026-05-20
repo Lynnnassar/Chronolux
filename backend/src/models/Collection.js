@@ -16,7 +16,6 @@ const collectionSchema = new mongoose.Schema(
     brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
-      required: true,
     },
     description: {
       type: String,
@@ -41,7 +40,7 @@ const collectionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Ensure a collection name is unique within a brand
-collectionSchema.index({ name: 1, brand: 1 }, { unique: true });
+// Collections are unique by name across the site
+collectionSchema.index({ name: 1 }, { unique: true });
 
 module.exports = mongoose.model("Collection", collectionSchema);

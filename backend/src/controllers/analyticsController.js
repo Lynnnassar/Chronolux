@@ -32,6 +32,76 @@ const getDashboardStats = asyncHandler(async (req, res) => {
   });
 });
 
+const getAnalyticsReport = asyncHandler(async (req, res) => {
+  const now = new Date();
+  const rangeStart = new Date(now);
+  rangeStart.setDate(rangeStart.getDate() - 29);
+  rangeStart.setHours(0, 0, 0, 0);
+
+  const revenueTrend = await Order.aggregate([
+    { $match: { status: "paid", createdAt: { $gte: rangeStart } } },
+    {
+      $group: {
+        _id: {
+          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+        },
+        total: { $sum: "$totalPrice" },
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
+
+  const brandSales = await Order.aggregate([
+    { $match: { status: "paid" } },
+    { $unwind: "$items" },
+    {
+      $lookup: {
+        from: "watches",
+        localField: "items.watch",
+        foreignField: "_id",
+        as: "watch",
+      },
+    },
+    { $unwind: { path: "$watch", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "brands",
+        localField: "watch.brand",
+        foreignField: "_id",
+        as: "brand",
+      },
+    },
+    { $unwind: { path: "$brand", preserveNullAndEmptyArrays: true } },
+    {
+      $group: {
+        _id: { $ifNull: ["$brand.name", "Unknown"] },
+        total: { $sum: { $multiply: ["$items.quantity", "$items.priceAtPurchase"] } },
+      },
+    },
+    { $project: { _id: 0, brand: "$_id", revenue: "$total" } },
+    { $sort: { revenue: -1 } },
+  ]);
+
+  const trendMap = revenueTrend.reduce((acc, row) => {
+    acc[row._id] = row.total;
+    return acc;
+  }, {});
+
+  const trendPoints = [];
+  for (let i = 0; i < 30; i += 1) {
+    const date = new Date(rangeStart);
+    date.setDate(rangeStart.getDate() + i);
+    const key = date.toISOString().slice(0, 10);
+    trendPoints.push({
+      date: key,
+      revenue: trendMap[key] || 0,
+    });
+  }
+
+  res.status(200).json({ revenueTrend: trendPoints, brandSales });
+});
+
 module.exports = {
   getDashboardStats,
+  getAnalyticsReport,
 };
