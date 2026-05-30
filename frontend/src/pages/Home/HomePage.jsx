@@ -21,7 +21,7 @@ const HomePage = () => {
     [brands],
   );
 
-  const featured = watches.slice(0, 6);
+  const featured = watches.slice(0, 3);
 
   return (
     <div className="pb-20">
